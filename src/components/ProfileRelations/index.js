@@ -1,6 +1,31 @@
 import styled from "styled-components";
 import Box from "../Box";
 
+export function ProfileRelationsBox(props) {
+  console.log(props);
+  return (
+    <ProfileRelationsBoxWrapper>
+      <h2 className="smallTitle">
+        {props.title} ({props.items.length})
+      </h2>
+
+      <ul>
+        {props.items.slice(0, 6).map((relation) => (
+          <li key={relation.id}>
+            <a
+              href={`/${props.title.toLowerCase()}/${relation.title}`}
+              key={relation.title}
+            >
+              <img src={relation.image} />
+              <span>{relation.title}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </ProfileRelationsBoxWrapper>
+  );
+}
+
 export const ProfileRelationsBoxWrapper = styled(Box)`
   ul {
     display: grid;

@@ -7,7 +7,10 @@ import {
   OrkutNostalgicIconSet,
   AlurakutProfileSidebarMenuDefault,
 } from "../src/lib/AlurakutCommons";
-import { ProfileRelationsBoxWrapper } from "../src/components/ProfileRelations";
+import {
+  ProfileRelationsBoxWrapper,
+  ProfileRelationsBox,
+} from "../src/components/ProfileRelations";
 
 const ProfileSideBar = (props) => {
   return (
@@ -39,13 +42,52 @@ export default function Home() {
 
   const gihubUser = "PedroPMS";
   const amigos = [
-    "juunegreiros",
-    "omariosouto",
-    "peas",
-    "rafaballerini",
-    "marcobrunodev",
-    "felipefialho",
+    {
+      id: "juunegreiros",
+      title: "juunegreiros",
+      image: "https://github.com/juunegreiros.png",
+    },
+    {
+      id: "omariosouto",
+      title: "omariosouto",
+      image: "https://github.com/omariosouto.png",
+    },
+    { id: "peas", title: "peas", image: "https://github.com/peas.png" },
+    {
+      id: "rafaballerini",
+      title: "rafaballerini",
+      image: "https://github.com/rafaballerini.png",
+    },
+    {
+      id: "marcobrunodev",
+      title: "marcobrunodev",
+      image: "https://github.com/marcobrunodev.png",
+    },
+    {
+      id: "felipefialho",
+      title: "felipefialho",
+      image: "https://github.com/felipefialho.png",
+    },
   ];
+
+  const [seguidores, setSeguidores] = React.useState([]);
+  React.useEffect(() => {
+    fetch("https://api.github.com/users/PedroPMS/followers")
+      .then((response) => {
+        return response.json();
+      })
+      .then((resposta) => {
+        setSeguidores(resposta);
+      });
+  }, []);
+
+  const seguidoresFormatados = seguidores.map((seguidor) => {
+    return {
+      id: seguidor.login,
+      title: seguidor.login,
+      image: seguidor.avatar_url,
+    };
+  });
 
   return (
     <>
@@ -94,7 +136,7 @@ export default function Home() {
                 />
               </div>
 
-              <button>Criar comunnidade</button>
+              <button>Criar comunidade</button>
             </form>
           </Box>
         </div>
@@ -102,36 +144,14 @@ export default function Home() {
           className="profileRelationsArea"
           style={{ gridArea: "profileRelationsArea" }}
         >
-          <ProfileRelationsBoxWrapper>
-            <h2 className="smallTitle">Amigos ({amigos.length})</h2>
-            <ul>
-              {amigos.map((amigo) => (
-                <li key={amigo}>
-                  <a href={`/users/${amigo}`} key={amigo}>
-                    <img src={`https://github.com/${amigo}.png`} />
-                    <span>{amigo}</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </ProfileRelationsBoxWrapper>
+          <ProfileRelationsBox title={"Amigos"} items={amigos} />
 
-          <ProfileRelationsBoxWrapper>
-            <h2 className="smallTitle">Comunidades ({comunidades.length})</h2>
-            <ul>
-              {comunidades.map((comunidade) => (
-                <li key={comunidade.id}>
-                  <a
-                    href={`/comunities/${comunidade.title}`}
-                    key={comunidade.title}
-                  >
-                    <img src={comunidade.image} />
-                    <span>{comunidade.title}</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </ProfileRelationsBoxWrapper>
+          <ProfileRelationsBox title={"Comunidades"} items={comunidades} />
+
+          <ProfileRelationsBox
+            title={"Seguidores"}
+            items={seguidoresFormatados}
+          />
         </div>
       </MainGrid>
     </>

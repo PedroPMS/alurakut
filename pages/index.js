@@ -7,10 +7,7 @@ import {
   OrkutNostalgicIconSet,
   AlurakutProfileSidebarMenuDefault,
 } from "../src/lib/AlurakutCommons";
-import {
-  ProfileRelationsBoxWrapper,
-  ProfileRelationsBox,
-} from "../src/components/ProfileRelations";
+import { ProfileRelationsBox } from "../src/components/ProfileRelations";
 
 const ProfileSideBar = (props) => {
   return (
@@ -33,40 +30,35 @@ const ProfileSideBar = (props) => {
 };
 
 export default function Home() {
-  const comunidadePadrao = {
-    id: new Date().toISOString,
-    title: "Eu odeio acordar cedo",
-    image: "https://alurakut.vercel.app/capa-comunidade-01.jpg",
-  };
-  const [comunidades, setComunidades] = React.useState([comunidadePadrao]);
+  const [comunidades, setComunidades] = React.useState([]);
 
   const gihubUser = "PedroPMS";
   const amigos = [
     {
       id: "juunegreiros",
       title: "juunegreiros",
-      image: "https://github.com/juunegreiros.png",
+      imageUrl: "https://github.com/juunegreiros.png",
     },
     {
       id: "omariosouto",
       title: "omariosouto",
-      image: "https://github.com/omariosouto.png",
+      imageUrl: "https://github.com/omariosouto.png",
     },
-    { id: "peas", title: "peas", image: "https://github.com/peas.png" },
+    { id: "peas", title: "peas", imageUrl: "https://github.com/peas.png" },
     {
       id: "rafaballerini",
       title: "rafaballerini",
-      image: "https://github.com/rafaballerini.png",
+      imageUrl: "https://github.com/rafaballerini.png",
     },
     {
       id: "marcobrunodev",
       title: "marcobrunodev",
-      image: "https://github.com/marcobrunodev.png",
+      imageUrl: "https://github.com/marcobrunodev.png",
     },
     {
       id: "felipefialho",
       title: "felipefialho",
-      image: "https://github.com/felipefialho.png",
+      imageUrl: "https://github.com/felipefialho.png",
     },
   ];
 
@@ -79,13 +71,20 @@ export default function Home() {
       .then((resposta) => {
         setSeguidores(resposta);
       });
+
+    fetch("http://localhost:3000/api/comunidades/getAll")
+      .then((response) => response.json())
+      .then((resposta) => {
+        const comunidadesDato = resposta.data;
+        setComunidades(comunidadesDato);
+      });
   }, []);
 
   const seguidoresFormatados = seguidores.map((seguidor) => {
     return {
       id: seguidor.login,
       title: seguidor.login,
-      image: seguidor.avatar_url,
+      imageUrl: seguidor.avatar_url,
     };
   });
 
@@ -106,18 +105,27 @@ export default function Home() {
           <Box>
             <h2 className="subTitle">O que você deseja fazer?</h2>
             <form
-              onSubmit={(event) => {
+              onSubmit={async (event) => {
                 event.preventDefault();
 
                 const dadosForm = new FormData(event.target);
 
                 const novaComunidade = {
-                  id: new Date().toISOString,
                   title: dadosForm.get("title"),
-                  image: dadosForm.get("image"),
+                  imageUrl: dadosForm.get("image"),
+                  creatorSlug: "PedroPMS",
                 };
 
-                setComunidades([...comunidades, novaComunidade]);
+                const resposta = await fetch("api/comunidades/create", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify(novaComunidade),
+                });
+                const novaComunidadeJson = await resposta.json();
+
+                setComunidades([...comunidades, novaComunidadeJson.comunidade]);
               }}
             >
               <div>

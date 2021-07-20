@@ -2,7 +2,6 @@ import styled from "styled-components";
 import Box from "../Box";
 
 export function ProfileRelationsBox(props) {
-  console.log(props);
   return (
     <ProfileRelationsBoxWrapper>
       <h2 className="smallTitle">
@@ -13,10 +12,10 @@ export function ProfileRelationsBox(props) {
         {props.items.slice(0, 6).map((relation) => (
           <li key={relation.id}>
             <a
-              href={`/${props.title.toLowerCase()}/${relation.title}`}
+              href={`/${props.title.toLowerCase()}/${relation.id}`}
               key={relation.title}
             >
-              <img src={relation.image} />
+              <img src={relation.imageUrl} />
               <span>{relation.title}</span>
             </a>
           </li>

@@ -72,7 +72,7 @@ export default function Home() {
         setSeguidores(resposta);
       });
 
-    fetch("http://localhost:3000/api/comunidades/getAll")
+    fetch("/api/comunidades/getAll")
       .then((response) => response.json())
       .then((resposta) => {
         const comunidadesDato = resposta.data;
